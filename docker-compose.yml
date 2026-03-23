@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql-db
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=P@ssw0rd
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql:Z
+    networks:
+      - app-network
+
+  mssql-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql-init
+    depends_on:
+      - sqlserver
+    restart: on-failure:10 # Додано: спробує ще раз, якщо база не відповіла
+    user: root
+    networks:
+      - app-network
+    entrypoint: 
+      - /bin/bash
+      - -c
+      - |
+        echo "Init script started..."
+        sleep 20
+        /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P 'P@ssw0rd' -C -Q 'IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = "SSA") CREATE DATABASE SSA'
+        echo "Init script finished."
+
+  my-app:
+    build: .
+    container_name: java-backend
+    restart: always # Додано: буде підніматися, поки не з'єднається з базою
+    depends_on:
+      - sqlserver
+      #- mssql-init
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=SSA;encrypt=true;trustServerCertificate=true
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=P@ssw0rd
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SPRING_FLYWAY_ENABLED=true
+      - SPRING_FLYWAY_BASELINE_ON_MIGRATE=false  # КРАЩЕ FALSE, щоб V0 виконалось
+      - SPRING_FLYWAY_SCHEMAS=dbo
+      - SPRING_FLYWAY_LOCATIONS=classpath:db/migration
+    networks:
+      - app-network
+
+volumes:
+  mssql-data:
+
+networks:
+  app-network:
+    driver: bridge

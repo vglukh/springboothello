@@ -1,0 +1,2 @@
+ALTER TABLE task ADD deleted BIT NOT NULL DEFAULT 0;
+GO
