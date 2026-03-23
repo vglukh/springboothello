@@ -30,8 +30,8 @@ jobs:
     - name: Build and Push to ACR
       run: |
         az acr login --name ${{ secrets.ACR_USERNAME }}
-        docker build -t ${{ secrets.ACR_USERNAME }}.azurecr.io/task-app:${{ github.sha }} .
-        docker push ${{ secrets.ACR_USERNAME }}.azurecr.io/task-app:${{ github.sha }}
+        docker build -t ${{ secrets.ACR_USERNAME }}.azurecr.io/springboothello_my-app:${{ github.sha }} .
+        docker push ${{ secrets.ACR_USERNAME }}.azurecr.io/springboothello_my-app:${{ github.sha }}
 
     - name: Deploy to Azure Container Instances
       uses: azure/aci-deploy@v1
