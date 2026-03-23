@@ -30,15 +30,15 @@ jobs:
     - name: Build and Push to ACR
       run: |
         az acr login --name ${{ secrets.ACR_USERNAME }}
-        docker build -t ${{ secrets.ACR_USERNAME }}.azurecr.io/springboothello_my-app:${{ github.sha }} .
-        docker push ${{ secrets.ACR_USERNAME }}.azurecr.io/springboothello_my-app:${{ github.sha }}
+        docker build -t ${{ secrets.ACR_USERNAME }}.azurecr.io/springboothello-clouds:${{ github.sha }} .
+        docker push ${{ secrets.ACR_USERNAME }}.azurecr.io/springboothello-clouds:${{ github.sha }}
 
     - name: Deploy to Azure Container Instances
       uses: azure/aci-deploy@v1
       with:
         resource-group: MyJavaSBCloudProject
         dns-name-label: springboothello-clouds-${{ github.repository_owner }}
-        image: ${{ secrets.ACR_USERNAME }}.azurecr.io/springboothello_my-app:${{ github.sha }}
+        image: ${{ secrets.ACR_USERNAME }}.azurecr.io/springboothello-clouds:${{ github.sha }}
         name: springboothello-clouds
         location: westeurope
         ports: 8080
