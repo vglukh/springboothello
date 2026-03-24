@@ -37,7 +37,7 @@ jobs:
       uses: azure/aci-deploy@v1
       with:
         resource-group: MyJavaSBCloudProject
-        dns-name-label: springboothello-clouds-${{ github.repository_owner }}
+        dns-name-label: springboothello-clouds
         image: ${{ secrets.ACR_USERNAME }}.azurecr.io/springboothello-clouds:${{ github.sha }}
         name: springboothello-clouds
         location: westeurope
