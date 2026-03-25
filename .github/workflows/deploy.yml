@@ -2,7 +2,7 @@ name: Build and Deploy to Azure
 
 on:
   push:
-    branches: [ "master" ] # Спрацьовує при кожному пуші в main
+    branches: [ "master" ]
 
 jobs:
   build-and-deploy:
@@ -50,3 +50,4 @@ jobs:
           SPRING_DATASOURCE_USERNAME=cloudadmin
           SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}
           SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+          APPLICATIONINSIGHTS_CONNECTION_STRING=${{ secrets.APPLICATIONINSIGHTS_CONNECTION_STRING }}
