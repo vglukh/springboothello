@@ -2,10 +2,9 @@ package com.vgd.springboot.start.springboothello.entity;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import org.hibernate.annotations.*;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,11 +19,10 @@ import lombok.*;
 @Entity
 @NamedEntityGraph(
 		name = "Task.withTagsAndUser",
-        attributeNodes = {@NamedAttributeNode("user"),
-        		@NamedAttributeNode(value = "tags", subgraph = "tags_category_subgraph")},
+        attributeNodes = {@NamedAttributeNode(value = "tags", subgraph = "tags_category_subgraph")},
         subgraphs = @NamedSubgraph(name = "tags_category_subgraph", attributeNodes = @NamedAttributeNode("category"))
 )
-@SQLDelete(sql = "UPDATE task SET deleted = 1 WHERE id = ?")
+@SQLDelete(sql = "UPDATE task SET deleted = 1 WHERE id = ? AND version = ?")
 @SQLRestriction("deleted = 0")
 @Getter
 @Setter
@@ -46,10 +44,8 @@ public class Task extends BaseEntity {
 	@Column(nullable = false)
 	private boolean deleted = false;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "user_id")
-	@JsonIgnoreProperties({"hibernateLazyInitializer","tasks"})
-	private User user;
+	@Column(name = "user_id")
+	private UUID userId;
 	
 	@JsonManagedReference
 	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})

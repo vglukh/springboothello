@@ -1,6 +1,8 @@
 package com.vgd.springboot.start.springboothello.controller;
 
 import java.util.List;
+import java.util.UUID;
+
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +32,7 @@ public class TaskController {
 	}
 	
 	@GetMapping("/search_user/{userId}")
-	public List<Task> getTasksByUser(@PathVariable Long userId) {
+	public List<Task> getTasksByUser(@PathVariable UUID userId) {
 		return taskService.findByUserId(userId);
 	}
 	
@@ -61,7 +63,7 @@ public class TaskController {
 	}
 	
 	@DeleteMapping("/delete")
-	public void deleteTaskOfUser(@RequestParam Long id, @RequestParam Long userId) {
-		taskService.deleteTaskOfUser(id, userId);
+	public void deleteTaskOfUser(@RequestParam Long id) {
+		taskService.deleteTaskOfUser(id);
 	}
 }
